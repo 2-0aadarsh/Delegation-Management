@@ -1,14 +1,20 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { registerUserService, loginUserService } from "../services/auth.service.js";
 import { createSuperAdmin } from "../services/user.service.js";
 import { generateToken } from "../utils/jwt.js";
 import { logActivity } from "../models/activity.model.js";
 import { findUserById } from "../models/user.model.js";
 
+const isProd = process.env.NODE_ENV === "production";
 // Cookie configuration — httpOnly prevents JS access, secure in production only
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  secure: isProd,
+  // Production: UI and API are on different domains, so cookies must be cross-site.
+  // Browsers require `Secure` when `SameSite=None`.
+  sameSite: isProd ? "none" : "lax",
+  path: "/",
   maxAge: 24 * 60 * 60 * 1000, // 1 day in ms — mirrors JWT_EXPIRES
 };
 
@@ -85,8 +91,9 @@ export const logoutUser = (req, res, next) => {
     // Clearing the cookie is the entire logout mechanism — no server-side session to destroy
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      path: "/",
     });
 
     // Log the activity if we know the user (token was still valid when they hit logout)
