@@ -308,13 +308,6 @@ Start the dev server:
 npm run dev
 ```
 
-### 5. Bootstrap the first Super Admin
-
-```bash
-curl -X POST http://localhost:5000/api/auth/bootstrap-superadmin \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Super Admin","email":"superadmin@gmail.com","password":"123456"}'
-```
 
 Then login at `http://localhost:5173/login` with the credentials above.
 
@@ -355,6 +348,4 @@ Given the limited time constraint, the current MVP (Minimum Viable Product) is f
 - **Data Integrity** — Moving toward Soft Deletes (`deleted_at` timestamps) to prevent permanent data loss and allow for audit recovery.
 - **Automated Testing** — Implementing Jest and Supertest for CI/CD pipeline reliability.
 
----
 
-## 📄 License
